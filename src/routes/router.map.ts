@@ -9,7 +9,7 @@ import signUpRouter from "./signup.js";
 const rootRouter = Router();
 
 
-rootRouter.use(signUpRouter);
+rootRouter.use('/signup',signUpRouter);
 
 
 
