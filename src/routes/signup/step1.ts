@@ -4,18 +4,53 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
 import serverSuccessMessage from "./../../interfaces/serverResponseInterface.js";
-
+import serverError from "./../../interfaces/serverErrorInterface.js";
+import searchEmail from "../../db/search/searchEmail.js";
 
 const step1Router = Router();
 
-step1Router.get("/step1", async (req, res, next) => {
+
+step1Router.post("/step1", async (req, res, next) => {
   //validate email
+  const emailFormat = z.string().email().trim().min(3);
 
-  const emailInput = req.body.email
+  if (!req.body.email) {
+    return next(
+      new serverError(
+        new Error("email not present"),
+        403,
+        "INVALID_EMAIL",
+        "email not present"
+      )
+    );
+  }
 
-  const email = z.string().email().trim().min(3)
+  const emailParseResult = emailFormat.safeParse(req.body.email);
+
+  if (emailParseResult.success === false)
+    return next(
+      new serverError(
+        new Error("email not valid"),
+        403,
+        "INVALID_EMAIL",
+        "email not valid"
+      )
+    );
+
+  const email = emailParseResult.data;
 
   //check if email already exist in db
+
+  if (!await searchEmail(email, next)) {
+    return next(
+      new serverError(
+        new Error("email exist"),
+        403,
+        "EMAIL_EXISTS",
+        "email is already registered"
+      )
+    );
+  }
 
   //create otp
 
@@ -29,7 +64,7 @@ step1Router.get("/step1", async (req, res, next) => {
 
   try {
     //send otp email
-    const info = await sendOtpRegisterEmail("sbrakeshrath@gmail.com", otp);
+    const info = await sendOtpRegisterEmail(email, otp);
 
     //encrypt otp
     const saltRounds = 10;

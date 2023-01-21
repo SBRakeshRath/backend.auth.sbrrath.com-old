@@ -1,4 +1,4 @@
-type errorCode = "INTERNAL_ERROR" | "NOT_AUTHORIZED" | "NOT_FOUND";
+type errorCode = "INTERNAL_ERROR" | "NOT_AUTHORIZED" | "NOT_FOUND" | "INVALID_DATA" | "INVALID_EMAIL" | "EMAIL_EXISTS";
 
 class serverError extends Error {
   status: number = 500;

@@ -3,7 +3,9 @@ import app from "./app.js";
 
 
 
-var port = normalizePort(process.env.PORT);
+var port = normalizePort(process.env.port);
+
+
 
 app.set("port", port);
 

@@ -1,4 +1,4 @@
-import express from "express";
+import express,{Request,Response,NextFunction} from "express";
 
 import path from "path";
 import fs from "fs";
@@ -11,6 +11,7 @@ import cors from "cors";
 import { corsOptions } from "./config.js";
 import rootRouter from "../routes/router.map.js";
 import finalErrorHandler from "./error.js";
+import serverError from './../interfaces/serverErrorInterface.js';
 //init
 
 const app = express();
@@ -42,6 +43,12 @@ if (process.env.environment == "production") {
 //handling json data
 
 app.use(express.json());
+
+app.use((err:SyntaxError, req:Request, res:Response, next:NextFunction) => {
+  if (err) {
+    return next(new serverError(undefined,403,'INVALID_DATA',"please provide data in correct form"))
+  }
+})
 
 //handling incoming data
 app.use(express.urlencoded({ extended: false }));
