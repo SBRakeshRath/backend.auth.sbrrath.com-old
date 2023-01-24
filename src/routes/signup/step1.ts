@@ -73,6 +73,8 @@ step1Router.post("/step1", async (req, res, next) => {
     //create jwt token
     const jwtData = {
       token: hashedOtp,
+      email:email,
+      name:"step1"
     };
 
     const jwtToken = jwt.sign(jwtData, process.env.jwtTokenSign, {
@@ -81,9 +83,14 @@ step1Router.post("/step1", async (req, res, next) => {
 
     res.json(new serverSuccessMessage({ token: jwtToken }).getResponse());
   } catch (error) {
-    res.json({
-      error: error,
-    });
+    return next(
+      new serverError(
+        new Error("internal error"),
+        500,
+        "INTERNAL_ERROR",
+        "internal error"
+      )
+    );
   }
 });
 
