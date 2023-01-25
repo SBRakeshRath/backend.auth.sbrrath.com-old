@@ -11,7 +11,6 @@ const step1_1Router = Router();
 
 step1_1Router.post("/step1Otp", async (req, res, next) => {
 
-    console.log(req.body)
   if (!req.body.emailToken) {
     return next(
       new serverError(
@@ -99,7 +98,7 @@ step1_1Router.post("/step1Otp", async (req, res, next) => {
     const jwtToken = jwt.sign(resTokenData, process.env.jwtTokenSign);
   
 
-    res.json(new serverSuccessMessage({ token: tokenData }).getResponse());
+    res.json(new serverSuccessMessage({ token: jwtToken }).getResponse());
   } catch (error) {
     switch (error.name) {
       case "TokenExpiredError":
